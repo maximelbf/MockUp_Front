@@ -10,29 +10,34 @@ function applique(f, tab) {
   return tab.map(f);
 }
 
-fetch('https://b6c402bb-5170-4d82-8b00-abcc7d6e595b-00-3pgr6isdxpgh5.picard.replit.dev/msg/getAll')
-  .then(function(response) {
-    return response.json();
-  })
-  .then(function(data) {
-    alert(data)
-  });
+var msgs = [];
 
-let msgs = [
-  { msg: "Hello World", pseudo: "Alice", date: new Date("2024-01-15T10:30:00") },
-  { msg: "Blah Blah", pseudo: "Bob", date: new Date("2024-02-20T14:15:00") },
-  { msg: "I love cats", pseudo: "Alice", date: new Date("2024-03-06T09:00:00") }
-];
+function fetchMsgs() {
+  fetch('https://b6c402bb-5170-4d82-8b00-abcc7d6e595b-00-3pgr6isdxpgh5.picard.replit.dev/msg/getAll')
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(data) {
+      if (Array.isArray(data.msgs)) {
+        msgs = data.msgs;
+        update(msgs);
+      }
+    })
+    .catch(function(err) {
+      console.error("Failed to fetch messages:", err);
+    });
+}
 
 function update(tab) {
   const ul = document.querySelector("ul");
   ul.innerHTML = "";
   tab.forEach(item => {
     const li = document.createElement("li");
+    const dateStr = item.date ? new Date(item.date).toLocaleString() : "";
     li.innerHTML = `
       <span class="pseudo">${item.pseudo}</span>
       <span class="msg-text">${item.msg}</span>
-      <span class="date">${item.date.toLocaleString()}</span>
+      <span class="date">${dateStr}</span>
     `;
     ul.appendChild(li);
   });
@@ -44,7 +49,7 @@ function send() {
   const text = textarea.value.trim();
   const pseudo = pseudoInput.value.trim() || "Anonyme";
   if (!text) return;
-  msgs.push({ msg: text, pseudo, date: new Date() });
+  msgs.push({ msg: text, pseudo, date: new Date().toISOString() });
   update(msgs);
   textarea.value = "";
 }
@@ -56,7 +61,7 @@ function toggleTheme() {
 }
 
 document.querySelector("#send-btn").addEventListener("click", send);
-document.querySelector("#update-btn").addEventListener("click", () => update(msgs));
+document.querySelector("#update-btn").addEventListener("click", fetchMsgs);
 document.querySelector("#theme-toggle").addEventListener("click", toggleTheme);
 
-update(msgs);
+fetchMsgs();
