@@ -13,16 +13,17 @@
   <div class="bg bg2"></div>
   <div class="bg bg3"></div>
   <div class="content">
-    <h1>Sujet des messages</h1>
-    <ul>
-      <li>a</li>
-      <li>b</li>
-      <li>c</li>
-      <li>d</li>
-      <li>e</li>
-    </ul>
-    <textarea></textarea>
-    <button>Envoyer</button>
+    <div class="top-bar">
+      <h1>Sujet des messages</h1>
+      <button id="theme-toggle">☾ Sombre</button>
+    </div>
+    <ul></ul>
+    <input id="pseudo" type="text" placeholder="Votre pseudo" />
+    <textarea placeholder="Votre message..."></textarea>
+    <div class="actions">
+      <button id="update-btn">Mise à jour</button>
+      <button id="send-btn">Envoyer</button>
+    </div>
   </div>
 </body>
 <script src="script.js"></script>
