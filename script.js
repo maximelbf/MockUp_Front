@@ -1,3 +1,5 @@
+let API = document.querySelector("#api-url").value;
+
 function fact(n) {
   if (n == 0) {
     return 1;
@@ -13,7 +15,7 @@ function applique(f, tab) {
 var msgs = [];
 
 function fetchMsgs() {
-  fetch('https://b6c402bb-5170-4d82-8b00-abcc7d6e595b-00-3pgr6isdxpgh5.picard.replit.dev/msg/getAll')
+  fetch(`${API}/msg/getAll`)
     .then(function(response) {
       return response.json();
     })
@@ -28,16 +30,20 @@ function fetchMsgs() {
     });
 }
 
+document.querySelector("#api-btn").addEventListener("click", () => {
+  API = document.querySelector("#api-url").value.trim().replace(/\/$/, "");
+  fetchMsgs();
+});
+
 function update(tab) {
   const ul = document.querySelector("ul");
   ul.innerHTML = "";
   tab.forEach(item => {
     const li = document.createElement("li");
-    const dateStr = item.date ? new Date(item.date).toLocaleString() : "";
     li.innerHTML = `
       <span class="pseudo">${item.pseudo}</span>
       <span class="msg-text">${item.msg}</span>
-      <span class="date">${dateStr}</span>
+      <span class="date">${new Date(item.date).toLocaleString()}</span>
     `;
     ul.appendChild(li);
   });
@@ -49,9 +55,15 @@ function send() {
   const text = textarea.value.trim();
   const pseudo = pseudoInput.value.trim() || "Anonyme";
   if (!text) return;
-  msgs.push({ msg: text, pseudo, date: new Date().toISOString() });
-  update(msgs);
-  textarea.value = "";
+
+  fetch(`${API}/msg/post/${encodeURIComponent(pseudo)}/${encodeURIComponent(text)}`)
+    .then(res => res.json())
+    .then(() => {
+      textarea.value = "";
+      pseudoInput.value = "";
+      fetchMsgs();
+    })
+    .catch(err => console.error("Failed to send message:", err));
 }
 
 function toggleTheme() {
@@ -61,7 +73,7 @@ function toggleTheme() {
 }
 
 document.querySelector("#send-btn").addEventListener("click", send);
-document.querySelector("#update-btn").addEventListener("click", fetchMsgs);
+document.querySelector("#update-btn").addEventListener("click", () => fetchMsgs());
 document.querySelector("#theme-toggle").addEventListener("click", toggleTheme);
 
 fetchMsgs();

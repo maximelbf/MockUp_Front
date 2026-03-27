@@ -179,7 +179,35 @@ ul li {
   margin-top: 8px;
 }
 
-/* Dark theme */
+.api-bar {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+#api-url {
+  font-family: 'DM Sans', sans-serif;
+  flex: 1;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  outline: none;
+  color: #555;
+}
+
+#api-url:focus {
+  border-color: #999;
+}
+
+body.dark #api-url {
+  background: #2a2a2a;
+  border-color: #444;
+  color: #eee;
+}
+
 body.dark .content {
   background-color: rgba(30, 30, 30, 0.92);
 }
